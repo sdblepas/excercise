@@ -51,7 +51,7 @@ def create_user():
         return make_response(jsonify({'message': 'error creating user'}), 500)
 
 # get all users
-@app.route('/users', methods=['GET'])
+@app.route('/list', methods=['GET'])
 def get_users():
     try:
         users = User.query.all()
@@ -60,7 +60,7 @@ def get_users():
         return make_response(jsonify({'message': 'error getting users'}), 500)
 
 # get a user by id
-@app.route('/users/<int:id>', methods=['GET'])
+@app.route('/employee/<int:id>', methods=['GET'])
 def get_user(id):
     try:
         user = User.query.filter_by(id=id).first()
@@ -69,31 +69,3 @@ def get_user(id):
         return make_response(jsonify({'message': 'user not found'}), 404)
     except e:
         return make_response(jsonify({'message': 'error getting user'}), 500)
-
-# update a user
-@app.route('/users/<int:id>', methods=['PUT'])
-def update_user(id):
-    try:
-        user = User.query.filter_by(id=id).first()
-        if user:
-            data = request.get_json()
-            user.username = data['username']
-            user.email = data['email']
-            db.session.commit()
-            return make_response(jsonify({'message': 'user updated'}), 200)
-        return make_response(jsonify({'message': 'user not found'}), 404)
-    except e:
-        return make_response(jsonify({'message': 'error updating user'}), 500)
-
-# delete a user
-@app.route('/users/<int:id>', methods=['DELETE'])
-def delete_user(id):
-    try:
-        user = User.query.filter_by(id=id).first()
-        if user:
-            db.session.delete(user)
-            db.session.commit()
-            return make_response(jsonify({'message': 'user deleted'}), 200)
-        return make_response(jsonify({'message': 'user not found'}), 404)
-    except e:
-        return make_response(jsonify({'message': 'error deleting user'}), 500)
