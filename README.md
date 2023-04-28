@@ -32,4 +32,4 @@ Each employee record should contain the following fields/keys - Name, Last Name,
 
 
 ### Assignment submission
-Once you are absolutly sure you finished the assigment, please upload your solution [here](https://www.dropbox.com/request/wLRA4RxlfsHHQfZs2vPe)
+Once you are absolutly sure you finished the assigment, please upload your solution 
