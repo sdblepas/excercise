@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy_utils import PhoneNumber
 from os import environ
 
 app = Flask(__name__)
@@ -9,14 +10,26 @@ db = SQLAlchemy(app)
 class User(db.Model):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    id = db.Column(db.Integer, unique=True, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    lastname = db.Column(db.String(80), nullable=False)
+    birthdate = db.Column(db.DateTime)
+    job_title = db.Column(db.String(80), unique=True, nullable=False)
+    _phone_number = db.Column(db.Unicode(255))
+    phone_country_code = db.Column(db.Unicode(8))
+    phone_number = db.composite(
+        PhoneNumber,
+        _phone_number,
+        phone_country_code
+    )
 
     def json(self):
-        return {'id': self.id,'username': self.username, 'email': self.email}
+        return {'id': self.id,'Name': self.name, 'Lastname': self.lastname,'Birthdate': self.birthdate,
+                'Job Title': self.job_title, 'Phone Number': self.phone_number}
 
+db.drop_all()
 db.create_all()
+
 
 #create a test route
 @app.route('/test', methods=['GET'])
