@@ -16,7 +16,7 @@ class User(db.Model):
     birthdate = db.Column(db.DateTime)
     job_title = db.Column(db.String(80), unique=True, nullable=False)
     _phone_number = db.Column(db.Unicode(255))
-    phone_country_code = db.Column(db.Unicode(8))
+    phone_country_code = db.Column(db.Unicode(8), default=972)
     phone_number = db.composite(
         PhoneNumber,
         _phone_number,
@@ -38,11 +38,12 @@ def test():
 
 
 # create a user
-@app.route('/users', methods=['POST'])
+@app.route('/create', methods=['POST'])
 def create_user():
     try:
         data = request.get_json()
-        new_user = User(username=data['username'], email=data['email'])
+        new_user = User(id=data['id'], Name=data['name'], Lastname=data['lastname'], Birthdate=data['birthdate'],
+                        Job_Title=data['job_title'], Phone_Number=data['phone_number'])
         db.session.add(new_user)
         db.session.commit()
         return make_response(jsonify({'message': 'user created'}), 201)
