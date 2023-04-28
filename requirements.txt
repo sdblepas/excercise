@@ -1,4 +1,4 @@
 flask
 psycopg2-binary
 Flask-SQLAlchemy
-sqlalchemy_utils
+SQLAlchemy-Utils

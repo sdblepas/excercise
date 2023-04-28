@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_utils import PhoneNumber
 from os import environ
+from datetime import datetime
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
@@ -31,7 +33,7 @@ class User(db.Model):
 
 db.drop_all()
 db.create_all()
-admin = User('1', 'Benjamin', 'Elharrar', date(1980, 01, 16), 'DevOps Manager', '546867987')
+admin = User('1', 'Benjamin', 'Elharrar', datetime(1980, 1, 16, 8, 10, 10, 10), 'DevOps Manager', '546867987')
 
 
 
