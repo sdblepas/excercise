@@ -7,6 +7,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
 db = SQLAlchemy(app)
 
+
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -24,14 +25,15 @@ class User(db.Model):
     )
 
     def json(self):
-        return {'id': self.id,'Name': self.name, 'Lastname': self.lastname,'Birthdate': self.birthdate,
+        return {'id': self.id, 'Name': self.name, 'Lastname': self.lastname, 'Birthdate': self.birthdate,
                 'Job Title': self.job_title, 'Phone Number': self.phone_number}
+
 
 db.drop_all()
 db.create_all()
 
 
-#create a test route
+# create a test route
 @app.route('/test', methods=['GET'])
 def test():
     return make_response(jsonify({'message': 'test route'}), 200)
@@ -50,6 +52,7 @@ def create_user():
     except e:
         return make_response(jsonify({'message': 'error creating user'}), 500)
 
+
 # get all users
 @app.route('/list', methods=['GET'])
 def get_users():
@@ -58,6 +61,7 @@ def get_users():
         return make_response(jsonify([user.json() for user in users]), 200)
     except e:
         return make_response(jsonify({'message': 'error getting users'}), 500)
+
 
 # get a user by id
 @app.route('/employee/<int:id>', methods=['GET'])
