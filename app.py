@@ -31,6 +31,8 @@ class User(db.Model):
 
 db.drop_all()
 db.create_all()
+admin = User('1', 'Benjamin', 'Elharrar', date(1980, 01, 16), 'DevOps Manager', '546867987')
+
 
 
 # create a test route
