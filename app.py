@@ -1,8 +1,7 @@
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy_utils import PhoneNumber
 from os import environ
-from datetime import datetime
+import datetime
 
 
 app = Flask(__name__)
@@ -18,13 +17,7 @@ class User(db.Model):
     lastname = db.Column(db.String(80), nullable=False)
     birthdate = db.Column(db.DateTime)
     job_title = db.Column(db.String(80), unique=True, nullable=False)
-    _phone_number = db.Column(db.Unicode(255))
-    phone_country_code = db.Column(db.Unicode(8), default=972)
-    phone_number = db.composite(
-        PhoneNumber,
-        _phone_number,
-        phone_country_code
-    )
+    phone_number = db.Column(db.Unicode(255))
 
     def json(self):
         return {'id': self.id, 'Name': self.name, 'Lastname': self.lastname, 'Birthdate': self.birthdate,
@@ -34,7 +27,7 @@ class User(db.Model):
 db.drop_all()
 db.create_all()
 admin = User('1', 'Benjamin', 'Elharrar', datetime(1980, 1, 16, 8, 10, 10, 10), 'DevOps Manager', '546867987')
-
+db.session.add(admin)
 
 
 # create a test route
