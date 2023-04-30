@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import event
 from os import environ
 from datetime import datetime
 
@@ -27,6 +28,21 @@ db.drop_all()
 db.create_all()
 admin = User('1', 'Benjamin', 'Elharrar', datetime(1980, 1, 16, 8, 10, 10, 10), 'DevOps Manager', '546867987')
 db.session.add(admin)
+
+
+class User_log(db.Model):
+    __tablename__ = 'user_log'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    modified_on = db.Column(db.DateTime, default=datetime.utcnow)
+    action = db.Column(db.String(100))
+
+
+@event.listens_for(User, "after_insert")
+def insert_user_log(mapper, connection, target):
+    po = User_log.__table__
+    connection.execute(po.insert().values(user_id=target.id, action='insert'))
 
 
 # create a test route
