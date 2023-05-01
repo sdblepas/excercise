@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event
 from os import environ
-from datetime import datetime
+from datetime import datetime, date
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
@@ -15,7 +15,7 @@ class User(db.Model):
     id = db.Column(db.Integer, unique=True, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     lastname = db.Column(db.String(80), nullable=False)
-    birthdate = db.Column(db.DateTime)
+    birthdate = db.Column(db.Date)
     job_title = db.Column(db.String(80), unique=True, nullable=False)
     phone_number = db.Column(db.Unicode(255))
 
@@ -23,20 +23,18 @@ class User(db.Model):
         return {'id': self.id, 'Name': self.name, 'Lastname': self.lastname, 'Birthdate': self.birthdate,
                 'Job Title': self.job_title, 'Phone Number': self.phone_number}
 
-
-db.drop_all()
 db.create_all()
-admin = User('1', 'Benjamin', 'Elharrar', datetime(1980, 1, 16, 8, 10, 10, 10), 'DevOps Manager', '546867987')
-db.session.add(admin)
-
 
 class User_log(db.Model):
     __tablename__ = 'user_log'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('User.id'))
     modified_on = db.Column(db.DateTime, default=datetime.utcnow)
     action = db.Column(db.String(100))
+
+    def json(self):
+        return {'id': self.id, 'user_id': self.user_id, 'modified_on': self.modified_on, 'action': self.action}
 
 
 @event.listens_for(User, "after_insert")
@@ -56,8 +54,8 @@ def test():
 def create_user():
     try:
         data = request.get_json()
-        new_user = User(id=data['id'], Name=data['name'], Lastname=data['lastname'], Birthdate=data['birthdate'],
-                        Job_Title=data['job_title'], Phone_Number=data['phone_number'])
+        new_user = User(id=data['id'], name=data['name'], lastname=data['lastname'], birthdate=data['birthdate'],
+                        job_title=data['job_title'], phone_number=data['phone_number'])
         db.session.add(new_user)
         db.session.commit()
         return make_response(jsonify({'message': 'user created'}), 201)
