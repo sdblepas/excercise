@@ -19,22 +19,39 @@ class User(db.Model):
     job_title = db.Column(db.String(80), unique=True, nullable=False)
     phone_number = db.Column(db.Unicode(255))
 
+    def __init__(self, id, name, lastname, birthdate, job_title, phone_number):
+        self.id = id
+        self.name = name
+        self.lastname = lastname
+        self.birthdate = birthdate
+        self.job_title = job_title
+        self.phone_number = phone_number
+
     def json(self):
         return {'id': self.id, 'Name': self.name, 'Lastname': self.lastname, 'Birthdate': self.birthdate,
                 'Job Title': self.job_title, 'Phone Number': self.phone_number}
 
+
+db.drop_all()
 db.create_all()
+new_user = User('1', 'benjamin', 'Elharrar', date(1980, 1, 16), 'DevOps manager', '0546867987')
+db.session.add(new_user)
+db.session.commit()
+
 
 class User_log(db.Model):
     __tablename__ = 'user_log'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     modified_on = db.Column(db.DateTime, default=datetime.utcnow)
     action = db.Column(db.String(100))
 
     def json(self):
         return {'id': self.id, 'user_id': self.user_id, 'modified_on': self.modified_on, 'action': self.action}
+
+
+db.create_all()
 
 
 @event.listens_for(User, "after_insert")
@@ -54,7 +71,7 @@ def test():
 def create_user():
     try:
         data = request.get_json()
-        new_user = User(id=data['id'], name=data['name'], lastname=data['lastname'], birthdate=data['birthdate'],
+        new_user = User(id=data['id'], name=data['name'], lastname=data['lastname'], birthdate=date,
                         job_title=data['job_title'], phone_number=data['phone_number'])
         db.session.add(new_user)
         db.session.commit()
