@@ -1,0 +1,75 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+  labels:
+    app: {{ .Values.app.name }}
+    release: {{ .Release.Name }}
+spec:
+  strategy:
+    type: RollingUpdate
+  replicas: {{ .Values.deployment.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+        release: {{ .Release.Name }}
+    spec:
+      {{- $affinity := .Values.deployment.affinity | default dict }}
+      {{- if $affinity.enabled }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: {{ .Values.app.name }}
+                  release: {{ .Release.Name }}
+              topologyKey: topology.kubernetes.io/zone
+      {{- end }}
+      containers:
+      - name: {{ .Values.app.name }}
+        image: {{ .Values.deployment.imageRepo }}:{{ .Values.deployment.imageTag | default "latest"}}
+        imagePullPolicy: {{ $.Values.deployment.imagePullPolicy | default "IfNotPresent" }}
+        env:
+        - name: {{ .Values.app.name }}
+          value: {{ .Values.app.name | quote }}
+        {{- range $key, $value := .Values.deployment.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        {{- if .Values.deployment.envSecret.enabled }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.app.name }}
+        {{- end }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.deployment.containerPort }}
+        readinessProbe:
+          httpGet:
+            port: {{ .Values.deployment.containerPort }}
+            path: {{ .Values.deployment.readinessProbePath | default "/" }}
+          initialDelaySeconds: {{ .Values.deployment.initialDelaySeconds | default 10 }}
+          timeoutSeconds: 5
+          periodSeconds: 5
+          successThreshold: 2
+          failureThreshold: 5
+        livenessProbe:
+          httpGet:
+            port: {{ .Values.deployment.containerPort }}
+            path: {{ .Values.deployment.livenessProbePath | default "/" }}
+          initialDelaySeconds: {{ .Values.deployment.initialDelaySeconds | default 10 }}
+          timeoutSeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+        {{- toYaml .Values.deployment.resources | nindent 10 }}
+      restartPolicy: Always

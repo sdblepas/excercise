@@ -1,0 +1,19 @@
+---
+{{- $ServiceEnable := $.Values.service.enabled | default true }}
+{{- if $ServiceEnable }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.app.name }}
+  labels:
+    app: {{ .Values.app.name }}
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    app: {{ .Values.app.name }}
+    release: {{ .Release.Name }}
+  type: {{ default "ClusterIP" .Values.service.type | quote }}  
+  ports:
+    - port: {{ default .Values.deployment.containerPort .Values.service.port }}
+      targetPort: {{ .Values.deployment.containerPort }}    
+{{- end}}
