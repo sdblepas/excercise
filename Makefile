@@ -17,7 +17,7 @@ add_host:
 	cat /etc/hosts
 
 build:
-	docker build --platform linux/arm64 -t $(DOCKER_REPO):latest .
+	docker build --platform linux/amd64 -t $(DOCKER_REPO):latest .
 	docker push $(DOCKER_REPO):latest
 
 test:
