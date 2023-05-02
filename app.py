@@ -31,7 +31,6 @@ class User(db.Model):
         return {'id': self.id, 'Name': self.name, 'Lastname': self.lastname, 'Birthdate': self.birthdate,
                 'Job Title': self.job_title, 'Phone Number': self.phone_number}
 
-
 db.create_all()
 new_user = User('1', 'benjamin', 'Elharrar', date(1980, 1, 16), 'DevOps manager', '0546867987')
 db.session.add(new_user)
@@ -48,6 +47,7 @@ class User_log(db.Model):
 
     def json(self):
         return {'id': self.id, 'user_id': self.user_id, 'modified_on': self.modified_on, 'action': self.action}
+
 
 db.create_all()
 
@@ -69,11 +69,12 @@ def test():
 def create_user():
     try:
         data = request.get_json()
-        user_add = User(id=data['id'], name=data['name'], lastname=data['lastname'], birthdate=datetime.date('birthdate'), job_title=data['job_title'], phone_number=data['phone_number'])
-        db.session.add(user_add)
+        new_user = User(id=data['id'], name=data['name'], lastname=data['lastname'], birthdate=datetime.strptime(data['birthdate'], '%Y-%m-%d').date(),
+                        job_title=data['job_title'], phone_number=data['phone_number'])
+        db.session.add(new_user)
         db.session.commit()
         return make_response(jsonify({'message': 'user created'}), 201)
-    except e:
+    except Exception as e:
         return make_response(jsonify({'message': 'error creating user'}), 500)
 
 
@@ -83,8 +84,17 @@ def get_users():
     try:
         users = User.query.all()
         return make_response(jsonify([user.json() for user in users]), 200)
-    except e:
+    except Exception as e:
         return make_response(jsonify({'message': 'error getting users'}), 500)
+
+# get top 50 logs
+@app.route('/logs', methods=['GET'])
+def get_logs():
+    try:
+        logs = User_log.query.order_by(User_log.modified_on.desc()).limit(50).all()
+        return make_response(jsonify([log.json() for log in logs]), 200)
+    except Exception as e:
+        return make_response(jsonify({'message': 'error getting logs'}), 500)
 
 
 # get a user by id
@@ -95,5 +105,5 @@ def get_user(id):
         if user:
             return make_response(jsonify({'user': user.json()}), 200)
         return make_response(jsonify({'message': 'user not found'}), 404)
-    except e:
+    except Exception as e:
         return make_response(jsonify({'message': 'error getting user'}), 500)
