@@ -75,6 +75,7 @@ def create_user():
         db.session.commit()
         return make_response(jsonify({'message': 'user created'}), 201)
     except Exception as e:
+        #return make_response(jsonify({'data':data,'message': str(e)}), 500)
         return make_response(jsonify({'message': 'error creating user'}), 500)
 
 
@@ -94,6 +95,7 @@ def get_logs():
         logs = User_log.query.order_by(User_log.modified_on.desc()).limit(50).all()
         return make_response(jsonify([log.json() for log in logs]), 200)
     except Exception as e:
+        #return make_response(jsonify({'message': str(e)}), 500)
         return make_response(jsonify({'message': 'error getting logs'}), 500)
 
 
