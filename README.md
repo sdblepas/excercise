@@ -1,3 +1,40 @@
+### Create K3d
+The following command will create a k3d cluster
+
+```make create_k3d```
+
+### install postgres
+This will install postgres via helm with a given password, that will be saved in the k8s secrets
+
+```make install_postgres POSTGRES_PASSWORD=test1234```
+
+### add_host
+Add address-book.kube.pm into /etc/host file
+```make add_host```
+
+### build
+Create application docker image and push to dockerhub
+```make build```
+
+### test
+E2E test for the application in docker-compose
+```make test```
+
+### deploy
+Deploy to K3d
+```make deploy POSTGRES_PASSWORD=test1234```
+
+
+
+
+
+
+
+
+
+
+
+
 Dear candidate,
 
 You can write in Python (preferred), NodeJS and Golang. If you are not familiar with any of these, please let us know and we’ll resolve it.
