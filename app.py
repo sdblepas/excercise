@@ -31,6 +31,7 @@ class User(db.Model):
         return {'id': self.id, 'Name': self.name, 'Lastname': self.lastname, 'Birthdate': self.birthdate,
                 'Job Title': self.job_title, 'Phone Number': self.phone_number}
 
+db.drop_all()
 db.create_all()
 new_user = User('1', 'benjamin', 'Elharrar', date(1980, 1, 16), 'DevOps manager', '0546867987')
 db.session.add(new_user)
