@@ -1,6 +1,6 @@
 
 APP_NAME=address-book
-DOCKER_REPO=sdblepas/vim
+DOCKER_REPO=sdblepas/vimdocker build --no-cache
 DOMAIN=address-book.kube.pm
 CLUSTER_NAME=k3d
 NAMESPACE=default
@@ -17,7 +17,7 @@ add_host:
 	cat /etc/hosts
 
 build:
-	docker build -t $(DOCKER_REPO):latest .
+	docker build --platform linux/amd64 -t $(DOCKER_REPO):latest .
 	docker push $(DOCKER_REPO):latest
 
 test:
