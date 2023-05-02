@@ -42,5 +42,5 @@ fi
 
 k3d cluster delete ${CLUSTER_NAME}
 wget -q -O - https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-k3d cluster create ${CLUSTER_NAME} -p "80:80@loadbalancer" --agents 2
+k3d cluster create ${CLUSTER_NAME} -p "80:4000@loadbalancer" --agents 2
 kubectl get nodes

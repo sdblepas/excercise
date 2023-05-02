@@ -28,8 +28,8 @@ spec:
     app: nginx
   type: NodePort
   ports:
-  - name: 80-4000
+  - name: 80-80
     nodePort: 30080
     port: 80
     protocol: TCP
-    targetPort: 4000
+    targetPort: 80
