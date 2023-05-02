@@ -31,7 +31,6 @@ class User(db.Model):
         return {'id': self.id, 'Name': self.name, 'Lastname': self.lastname, 'Birthdate': self.birthdate,
                 'Job Title': self.job_title, 'Phone Number': self.phone_number}
 
-db.drop_all()
 db.create_all()
 new_user = User('1', 'benjamin', 'Elharrar', date(1980, 1, 16), 'DevOps manager', '0546867987')
 db.session.add(new_user)
@@ -71,7 +70,7 @@ def create_user():
     try:
         data = request.get_json()
         new_user = User(id=data['id'], name=data['name'], lastname=data['lastname'], birthdate=datetime.strptime(data['birthdate'], '%Y-%m-%d').date(),
-                        job_title=data['job_title'], phone_number=data['phone_number'])
+                       job_title=data['job_title'], phone_number=data['phone_number'])
         db.session.add(new_user)
         db.session.commit()
         return make_response(jsonify({'message': 'user created'}), 201)
